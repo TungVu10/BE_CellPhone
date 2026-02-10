@@ -7,6 +7,8 @@ import java.util.List;
 
 @Data
 public class ProductVariantRequest {
+    // Update thông tin sản phẩm
+    private Integer variantId;
     private String name;
     private BigDecimal price;
     private Integer quantity;
@@ -14,4 +16,6 @@ public class ProductVariantRequest {
     private List<String> images; // list URL
     // ✅ Thêm thuộc tính riêng cho từng variant
     private List<ProductAttributeValueRequest> attributes;
+
+
 }

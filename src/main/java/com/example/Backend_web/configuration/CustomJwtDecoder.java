@@ -3,6 +3,7 @@ package com.example.Backend_web.configuration;
 import com.example.Backend_web.dto.request.IntrospectRequest;
 import com.example.Backend_web.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
@@ -47,4 +48,12 @@ public class CustomJwtDecoder implements JwtDecoder {
 
         return nimbusJwtDecoder.decode(token);
     }
+
+    //@Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/swagger-ui")
+                || path.startsWith("/v3/api-docs");
+    }
+
 }

@@ -21,4 +21,6 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 
     // 4️⃣ Tìm tất cả danh mục theo trạng thái (active/inactive)
     List<Category> findByStatus(Boolean status);
+
+
 }

@@ -20,6 +20,7 @@ public class ProductAttributeValue {
     private String value; // Ví dụ: 8GB, 16GB, Đen, Bạc, 512GB SSD
 
     @ManyToOne
+    //@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "attribute_id")
     private ProductAttribute attribute;
 

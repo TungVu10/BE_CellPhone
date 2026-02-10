@@ -64,7 +64,13 @@ public class CartService {
             cartItemRepo.save(newItem);
         }
 
-        return cartRepo.findById(cart.getId()).get();
+        //return cartRepo.findById(cart.getId()).get();
+        // ⚡ Force reload cart từ DB, bao gồm items
+        // 🔥 Reload items từ DB để đảm bảo POST trả về đủ
+        cart.setItems(cartItemRepo.findByCart(cart));
+
+        return cart;
+
     }
 
     // Hàm lấy ảnh của từng sản phẩm để hiển thị lên giỏ hàng
@@ -154,6 +160,25 @@ public class CartService {
 
         // Trả về cart mới nhất
         return cartRepo.findById(cart.getId()).orElse(cart);
+    }
+
+    //@Transactional
+    public Cart updateQuantity(Long userId, Integer variantId, Integer quantity) {
+        Cart cart = getCartByUser(userId); // lấy giỏ hàng đầy đủ items
+        CartItem item = cart.getItems().stream()
+                .filter(i -> i.getVariant().getVariantId().equals(variantId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại trong giỏ hàng"));
+
+        if (quantity <= 0) {
+            // Nếu số lượng <=0 thì xóa item
+            cart.getItems().remove(item);
+        } else {
+            item.setQuantity(quantity);
+        }
+
+        // Lưu cart lại, JPA sẽ tự động cập nhật CartItem nhờ cascade
+        return cartRepo.save(cart);
     }
 
 

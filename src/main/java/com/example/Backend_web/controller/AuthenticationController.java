@@ -7,9 +7,11 @@ import com.example.Backend_web.dto.response.AuthenticationResponse;
 import com.example.Backend_web.dto.response.IntrospectResponse;
 import com.example.Backend_web.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +35,8 @@ public class AuthenticationController {
 //                .build();
 //    }
 
-    @PostMapping("/token")
+    //End point đăng nhập tài khoản
+    @PostMapping("/login")
     public ApiResponse<AuthenticationResponse> login(@RequestBody AuthenticationRequest request) {
         AuthenticationResponse authResponse = authenticationService.authenticate(request);
         return ApiResponse.<AuthenticationResponse>builder()
@@ -50,6 +53,23 @@ public class AuthenticationController {
                 .build();
     }
 
+    //EndPoint Logout
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+
+        String authHeader = request.getHeader("Authorization");
+
+        // Không có token → coi như logout thành công
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ResponseEntity.ok("Logout success");
+        }
+
+        String token = authHeader.substring(7);
+        authenticationService.logout(token);
+
+        return ResponseEntity.ok("Logout success");
+    }
+
     //endpoint logout
 //    @PostMapping("/logout")
 //    ApiResponse<Void> logout(@RequestBody LogoutRequest request)
@@ -58,4 +78,6 @@ public class AuthenticationController {
 //        return ApiResponse.<Void>builder()
 //                .build();
 //    }
+
+    //Endpoint logout
 }

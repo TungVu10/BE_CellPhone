@@ -20,7 +20,12 @@ public interface ProductMapper {
             expression = "java(product.getCategory() != null && product.getCategory().getParent() != null ? product.getCategory().getParent().getCategoryId() : null)")
 
     @Mapping(target = "variants", expression = "java(product.getVariants() != null ? product.getVariants().stream().map(this::toVariantResponse).collect(Collectors.toList()) : null)")
+    //@Mapping(target = "isHot", expression = "java(product.getHotProducts() != null && !product.getHotProducts().isEmpty())")
+    //@Mapping(target = "isHot", ignore = true) // để service tự set
     ProductResponse toProductResponse(Product product);
+
+    //Set Status Sản phẩm HOT
+
 
     default ProductVariantResponse toVariantResponse(ProductVariant variant) {
         return new ProductVariantResponse(
@@ -53,7 +58,13 @@ public interface ProductMapper {
                 variant.getVariantAttributes() != null
                         ? variant.getVariantAttributes().stream()
                         .map(a -> new AttributeValueResponse(
-                                a.getAttributeValue().getId(),   // ✅ ID attribute (RAM, ROM, Pin, ...)
+                                // Lấy theo value_id
+                                //a.getAttributeValue().getId(),   // ✅ ID attribute (RAM, ROM, Pin, ...)
+                                //a.getValue()
+
+                                //a.getAttributeValue().getAttribute().getId(), // ✅ attribute_id
+                                //a.getValue()
+                                a.getAttributeValue().getAttribute().getId(), // ✅ attribute_id
                                 //a.getAttributeValue().getValue()                 // ✅ Giá trị của attribute (8GB, 256GB, ...)
                                 a.getValue()
                         ))

@@ -16,5 +16,44 @@ spring:
       ddl-auto: update
     show-sql: true
 
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: shop@gmail.com      # Email của admin
+#    password: your-app-password    # Password của admin
+#    properties:
+#      mail.smtp.auth: true
+#      mail.smtp.starttls.enable: true
+#      mail.smtp.starttls.required: true
+#      mail.smtp.connectiontimeout: 5000
+#      mail.smtp.timeout: 5000
+#      mail.smtp.writetimeout: 5000
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: "tungnguyenminion@gmail.com"
+#    password: "fxpwgmprdwqdvmle"
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+#            required: true
+
+
 jwt:
   signerKey: "zsEufemK4G3ADf41Q5Y5hpf/x96SPq39iohJcRiSRU5JQNIsuuLY7i0mq247cxfP"
+
+vnpay:
+  tmnCode: "DM574O7E"
+  hashSecret: "RGTJQR2FNG7CRJD6QUWKJP2E8JIKUFNB"
+  payUrl:  "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+  returnUrl: "http://localhost:8082/api/vnpay/return"
+
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+

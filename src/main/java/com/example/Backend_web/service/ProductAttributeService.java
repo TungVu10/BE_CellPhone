@@ -19,10 +19,10 @@ public class ProductAttributeService {
     private final CategoryRepository categoryRepository;
 
     public List<AttributeResponse> getAttributesByCategory(Integer categoryId) {
-        // 1️⃣ Lấy attribute của category con
+        // 1️ Lấy attribute của category con
         List<ProductAttribute> attributes = productAttributeRepository.findByCategory_CategoryId(categoryId);
 
-        // 2️⃣ Nếu category con chưa có attribute, lấy từ parent
+        // 2 Nếu category con chưa có attribute, lấy từ parent
         if (attributes == null || attributes.isEmpty()) {
             Category category = categoryRepository.findById(categoryId).orElse(null);
             if (category != null && category.getParent() != null) {
@@ -30,7 +30,7 @@ public class ProductAttributeService {
             }
         }
 
-        // 3️⃣ Map sang DTO trả về
+        // 3️ Map sang DTO trả về
         return attributes.stream()
                 .map(attribute -> new AttributeResponse(
                         attribute.getId(),

@@ -13,6 +13,7 @@ public class ProductResponse {
     private String slug;
     private String description;
     private Boolean status;
+    private Boolean isHot;
     private Integer categoryId;
     private Integer parentCategoryId;  // ✅ THÊM TRƯỜNG NÀY
     private List<ProductVariantResponse> variants;

@@ -21,6 +21,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -94,18 +96,46 @@ public class AuthenticationService {
                 .build();
     }
 
-//    public void logout(LogoutRequest request) throws ParseException, JOSEException {
-//        var signToken = verifyToken(request.getToken());
-//        String jit = signToken.getJWTClaimsSet().getJWTID();
-//        Date expiryTime = signToken.getJWTClaimsSet().getExpirationTime();
-//
-//        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
-//                .id(jit)
-//                .expiryTime(expiryTime)
-//                .build();
-//
-//        invalidatedTokenRepository.save(invalidatedToken);
-//    }
+    //Lấy thông tin User đang đăng nhập
+    public User getCurrentUser() {
+        // Lấy thông tin authentication từ context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("User chưa đăng nhập");
+        }
+
+        // Lấy username (hoặc email) từ principal
+        String username = authentication.getName();
+
+        // Lấy user từ database
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User không tồn tại"));
+    }
+
+    public void logout(String token) {
+        try {
+            var signedJWT = verifyToken(token);
+
+            String jti = signedJWT.getJWTClaimsSet().getJWTID();
+            Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+            if (jti == null) return;
+
+            // Tránh lưu trùng khi logout nhiều lần
+            if (invalidatedTokenRepository.existsById(jti)) return;
+
+            InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                    .id(jti)
+                    .expiryTime(expiryTime)
+                    .build();
+
+            invalidatedTokenRepository.save(invalidatedToken);
+
+        } catch (Exception e) {
+            // Token sai / hết hạn → coi như logout xong
+        }
+    }
 
     private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());

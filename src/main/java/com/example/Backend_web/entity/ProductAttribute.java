@@ -26,4 +26,18 @@ public class ProductAttribute {
     // 1 Attribute có nhiều giá trị
     @OneToMany(mappedBy = "attribute", cascade = CascadeType.ALL)
     private List<ProductAttributeValue> values;
+
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+//
+//    // Mã cố định để filter (RAM, ROM, COLOR, BATTERY...)
+//    @Column(nullable = false, unique = true)
+//    private String code;
+//
+//    // Tên hiển thị
+//    private String name;
+//
+//    @OneToMany(mappedBy = "attribute", cascade = CascadeType.ALL)
+//    private List<ProductAttributeValue> values;
 }

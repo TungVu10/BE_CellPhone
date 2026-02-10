@@ -55,6 +55,15 @@ public class SecurityConfig {
         httpSecurity
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
+                .headers(headers -> headers
+                        .contentSecurityPolicy(csp -> csp
+                                .policyDirectives(
+                                        "default-src 'self'; " +
+                                                "style-src 'self' 'unsafe-inline'; " +
+                                                "script-src 'self' 'unsafe-inline';"
+                                )
+                        )
+                )
                 .authorizeHttpRequests(request -> request
                         // ✅ Cho phép public các request GET về sản phẩm và ảnh
                         .requestMatchers(HttpMethod.GET,
@@ -65,9 +74,14 @@ public class SecurityConfig {
                                 "/image/**"
                         ).permitAll()
 
+                        .requestMatchers("/api/users/me").authenticated()
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        //.anyRequest().authenticated()
+
                         // ✅ Public POST cho login, introspect, và đăng ký tài khoản
                         .requestMatchers(HttpMethod.POST,
                                 "/auth/**",      // cho phép đăng nhập, introspect
+                                "/auth/logout",
                                 "/users"         // ✅ cho phép đăng ký tài khoản
                         ).permitAll()
 
@@ -76,6 +90,15 @@ public class SecurityConfig {
 
                         // ✅ Admin-only (ví dụ: thêm category)
                         .requestMatchers(HttpMethod.POST, "/api/categories/add").hasRole("ADMIN")
+
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
+
+                        //.requestMatchers("/send-test-email").permitAll() // cho test
+
 
                         // ✅ Các request khác yêu cầu phải đăng nhập
                         .anyRequest().authenticated()
@@ -86,6 +109,7 @@ public class SecurityConfig {
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                         .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
                 );
+
 
         return httpSecurity.build();
     }

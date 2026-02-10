@@ -13,5 +13,11 @@ public interface UserMapper {
 
     UserResponse toUserResponse(User user);
 
+    //Trả id từng User
+    default Long toIdUserResponse(User user) {
+        return user.getId();
+    }
+
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
+
 }

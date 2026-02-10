@@ -1,5 +1,8 @@
 package com.example.Backend_web.service;
 
+import com.example.Backend_web.dto.response.VariantImageResponse;
+import com.example.Backend_web.repository.ProductImageRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -12,11 +15,14 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class ImageService {
 
     private final String basePath = "D:/FileAnh_DoAn/"; // thư mục chứa ảnh
+    private final ProductImageRepository productImageRepository;
 
     public byte[] getImage(String fileName) throws IOException {
         Path path = Paths.get(basePath, fileName); // dùng Paths.get(basePath, fileName) an toàn hơn
@@ -30,6 +36,31 @@ public class ImageService {
         }
         return new UrlResource(path.toUri());
     }
+
+    //Lấy danh sách tất cả ảnh Sản phẩm
+//    public List<VariantImageResponse> getImagesByVariant(Integer variantId){
+//        return productImageRepository
+//                .findByVariant_VariantId(variantId)
+//                .stream()
+//                .map(img -> new VariantImageResponse(
+//                        img.getId(),
+//                        img.getImageUrl()
+//                ))
+//                .toList();
+//    }
+
+    public List<VariantImageResponse> getImagesByProduct(Integer productId) {
+        return productImageRepository
+                .findByVariant_Product_ProductId(productId)
+                .stream()
+                .map(img -> new VariantImageResponse(
+                        img.getId(),
+                        img.getImageUrl(),
+                        img.getVariant().getVariantId()
+                ))
+                .toList();
+    }
+
 }
 
 

@@ -1,5 +1,6 @@
 package com.example.Backend_web.controller;
 
+import com.example.Backend_web.dto.request.CategoryRequest;
 import com.example.Backend_web.dto.response.AttributeResponse;
 import com.example.Backend_web.dto.response.CategoryResponse;
 import com.example.Backend_web.entity.Category;
@@ -8,6 +9,7 @@ import com.example.Backend_web.service.CategoryService;
 import com.example.Backend_web.service.ProductAttributeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,4 +69,20 @@ public class CategoryController {
     public ResponseEntity<List<AttributeResponse>> getAttributesByCategory(@PathVariable Integer id) {
         return ResponseEntity.ok(productAttributeService.getAttributesByCategory(id));
     }
+
+    //API Update danh mục sản phẩm
+    @PutMapping("/update")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<CategoryResponse> updateCategory(@PathVariable Integer id, @RequestBody CategoryRequest request){
+        return ResponseEntity.ok(categoryService.updateCategory(id,request));
+    }
+
+    //API Xóa danh mục sản phẩm
+    @DeleteMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> deleCategory(@PathVariable Integer id){
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

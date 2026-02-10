@@ -1,5 +1,6 @@
 package com.example.Backend_web.service;
 
+import com.example.Backend_web.dto.request.CategoryRequest;
 import com.example.Backend_web.dto.response.CategoryResponse;
 import com.example.Backend_web.entity.Category;
 import com.example.Backend_web.mapper.CategoryMapper;
@@ -17,7 +18,7 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    // Thêm category mới
+    // Thêm mới danh mục
     public CategoryResponse addCategory(Category category) {
         if (category.getSlug() == null || category.getSlug().isBlank()) {
             throw new IllegalArgumentException("Slug không được để trống. Vui lòng nhập slug trong JSON.");
@@ -62,5 +63,45 @@ public class CategoryService {
         Category category = categoryRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         return categoryMapper.toCategoryResponse(category);
+    }
+
+    //Thêm mới danh mục
+//    public CategoryResponse createCategory(CategoryRequest request){
+//        if(categoryRepository.findById(request.getCategoryId()).isPresent()){
+//            throw new RuntimeException("Category already exists");
+//        }
+//
+//        Category category = new Category();
+//        category.setName(request.getCategoryName());
+//        category.setSlug(request.getCategorySlug());
+//
+//        Category saveCategory = categoryRepository.save(category);
+//        return new CategoryResponse(
+//               saveCategory.getCategoryId(),
+//                saveCategory.getName(),
+//                saveCategory.getSlug(),
+//                saveCategory.getParent().getCategoryId()
+//
+//        );
+//
+//
+//    }
+
+    //Sửa danh mục
+    public CategoryResponse updateCategory(Integer id, CategoryRequest request){
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Danh muc khong ton tai"));
+
+        category.setName(request.getCategoryName());
+        category.setSlug(request.getCategorySlug());
+        Category update = categoryRepository.save(category);
+        return categoryMapper.toCategoryResponse(update);
+    }
+
+    //Xóa danh mục
+    public void deleteCategory(Integer id){
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Danh muc khong ton tai"));
+        categoryRepository.delete(category);
     }
 }

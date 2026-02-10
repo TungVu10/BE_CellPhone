@@ -1,5 +1,7 @@
 package com.example.Backend_web.controller;
 
+import com.example.Backend_web.dto.response.VariantImageResponse;
+import com.example.Backend_web.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -20,6 +23,8 @@ import java.util.Map;
 public class ImageController {
 
     private final String UPLOAD_DIR = "D:/ServerImages"; // Thư mục lưu ảnh trên server
+
+    private final ImageService imageService;
 
     // Upload ảnh
     @PostMapping("/upload")
@@ -67,5 +72,11 @@ public class ImageController {
         else mediaType = MediaType.APPLICATION_OCTET_STREAM;
 
         return ResponseEntity.ok().contentType(mediaType).body(resource);
+    }
+
+    //EndPoint lấy danh sách tất cả ảnh Sản phẩm
+    @GetMapping("/product/{productId}")
+    public List<VariantImageResponse> getImages(@PathVariable Integer productId) {
+        return imageService.getImagesByProduct(productId);
     }
 }

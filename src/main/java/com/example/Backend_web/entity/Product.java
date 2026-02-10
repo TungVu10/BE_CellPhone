@@ -36,4 +36,11 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductVariant> variants; // Danh sách biến thể
+
+    @ManyToMany(mappedBy = "products")
+    private List<Voucher> vouchers;
+
+//    @OneToMany(mappedBy = "product")
+//    private List<HotProduct> hotProducts;
+
 }

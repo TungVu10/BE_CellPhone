@@ -43,7 +43,14 @@ public class ProductVariant {
     @OneToMany(mappedBy = "variant", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductImage> images; // Hình ảnh riêng cho variant
 
-    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ProductVariantAttribute> variantAttributes;
+
+
+
+    // Update thông tin sản phẩm
+//    @OneToMany(mappedBy = "variant")
+//    private List<OrderItem> orderItems;
+
 
 }
