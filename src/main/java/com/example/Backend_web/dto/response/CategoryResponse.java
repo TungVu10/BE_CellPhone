@@ -12,6 +12,8 @@ public class CategoryResponse {
     private String categoryName;
     private String categorySlug;
 
-    private Integer parentId; // chỉ lưu id của danh mục cha
+    //private Integer parentId; // chỉ lưu id của danh mục cha
+
+    private CategoryResponse parent; // ✅ object cha
 }
 

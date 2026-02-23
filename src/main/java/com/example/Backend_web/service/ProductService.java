@@ -15,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -438,6 +435,20 @@ public class ProductService {
                 .toList();
     }
 
+    // ✅ METHOD BỊ THIẾU → BỔ SUNG
+    public List<ProductResponse> getProductsByCategoryIds(Set<Integer> categoryIds) {
+        List<Product> products = productRepository.findByCategoryIds(categoryIds);
+        return products.stream()
+                .map(productMapper::toProductResponse)
+                .toList();
+
+
+    }
+
+    // Lấy tất Sản phâm của danh mục con như Apple, SamSung,...
+//    public List<Product> getProductsByCategory(Long categoryId) {
+//        return productRepository.findByCategory_CategoryId(categoryId);
+//    }
 
 
 }

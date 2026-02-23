@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
@@ -178,4 +179,17 @@ WHERE a.name = :code
             @Param("categoryId") Integer categoryId,
             @Param("currentId") Integer currentId
     );
+
+    // Query theo Danh mục
+    @Query("""
+SELECT p FROM Product p
+WHERE p.category.categoryId IN :categoryIds
+""")
+    List<Product> findByCategoryIds(Set<Integer> categoryIds);
+
+    // Lay tat ca sản pham thuộc danh mục con Aplle, SamSung,...
+//    List<Product> findByCategory_CategoryId(Long categoryId);
+
+
+
 }

@@ -3,16 +3,19 @@ package com.example.Backend_web.controller;
 import com.example.Backend_web.dto.request.CategoryRequest;
 import com.example.Backend_web.dto.response.AttributeResponse;
 import com.example.Backend_web.dto.response.CategoryResponse;
+import com.example.Backend_web.dto.response.ProductResponse;
 import com.example.Backend_web.entity.Category;
 import com.example.Backend_web.entity.ProductAttribute;
 import com.example.Backend_web.service.CategoryService;
 import com.example.Backend_web.service.ProductAttributeService;
+import com.example.Backend_web.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -21,13 +24,25 @@ public class CategoryController {
 
     private final CategoryService categoryService;
     private final ProductAttributeService productAttributeService;
+    private final ProductService productService;
+
+    // Thêm category mới
+//    @PostMapping("/add")
+//    public ResponseEntity<CategoryResponse> addCategory(@RequestBody Category category) {
+//        CategoryResponse response = categoryService.addCategory(category);
+//        return ResponseEntity.ok(response);
+//    }
 
     // Thêm category mới
     @PostMapping("/add")
-    public ResponseEntity<CategoryResponse> addCategory(@RequestBody Category category) {
-        CategoryResponse response = categoryService.addCategory(category);
+    public ResponseEntity<CategoryResponse> addCategory(
+            @RequestBody CategoryRequest request) {
+
+        CategoryResponse response = categoryService.addCategory(request);
         return ResponseEntity.ok(response);
     }
+
+
 
     // Lấy tất cả category
     @GetMapping
@@ -84,5 +99,19 @@ public class CategoryController {
         categoryService.deleteCategory(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/by-category/{categoryId}")
+    public List<ProductResponse> getByCategory(@PathVariable Integer categoryId) {
+        Set<Integer> categoryIds = categoryService.getAllChildCategoryIds(categoryId);
+        // 🔥 thêm chính nó vào
+        categoryIds.add(categoryId);
+        return productService.getProductsByCategoryIds(categoryIds);
+    }
+
+    // Lấy tat cả các Sản phẩm của danh mục con như Apple, SamSung,...
+//    @GetMapping("/category/{categoryId}")
+//    public ResponseEntity<?> getProductsByCategory(@PathVariable Long categoryId) {
+//        return ResponseEntity.ok(productService.getProductsByCategory(categoryId));
+//    }
 
 }

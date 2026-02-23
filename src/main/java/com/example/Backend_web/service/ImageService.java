@@ -21,16 +21,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ImageService {
 
-    private final String basePath = "D:/FileAnh_DoAn/"; // thư mục chứa ảnh
+//    private final String basePath = "D:/FileAnh_DoAn/"; // thư mục chứa ảnh
+//    private final ProductImageRepository productImageRepository;
+//
+//    public byte[] getImage(String fileName) throws IOException {
+//        Path path = Paths.get(basePath, fileName); // dùng Paths.get(basePath, fileName) an toàn hơn
+//        return Files.readAllBytes(path);
+//    }
+//
+//    public Resource getImageAsResource(String fileName) throws MalformedURLException {
+//        Path path = Paths.get(basePath, fileName);
+//        if (!Files.exists(path)) {
+//            throw new RuntimeException("File not found: " + fileName);
+//        }
+//        return new UrlResource(path.toUri());
+//    }
+
+    private static final String basePath = "D:/ServerImages/";
     private final ProductImageRepository productImageRepository;
 
-    public byte[] getImage(String fileName) throws IOException {
-        Path path = Paths.get(basePath, fileName); // dùng Paths.get(basePath, fileName) an toàn hơn
-        return Files.readAllBytes(path);
-    }
-
     public Resource getImageAsResource(String fileName) throws MalformedURLException {
-        Path path = Paths.get(basePath, fileName);
+        Path path = Paths.get(basePath).resolve(fileName).normalize();
         if (!Files.exists(path)) {
             throw new RuntimeException("File not found: " + fileName);
         }

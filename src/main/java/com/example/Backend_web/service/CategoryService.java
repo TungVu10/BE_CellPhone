@@ -8,7 +8,10 @@ import com.example.Backend_web.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.Normalizer;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,13 +22,41 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
 
     // Thêm mới danh mục
-    public CategoryResponse addCategory(Category category) {
-        if (category.getSlug() == null || category.getSlug().isBlank()) {
-            throw new IllegalArgumentException("Slug không được để trống. Vui lòng nhập slug trong JSON.");
+//    public CategoryResponse addCategory(Category category) {
+//        if (category.getSlug() == null || category.getSlug().isBlank()) {
+//            throw new IllegalArgumentException("Slug không được để trống. Vui lòng nhập slug trong JSON.");
+//        }
+//        Category saved = categoryRepository.save(category);
+//        return categoryMapper.toCategoryResponse(saved);
+//    }
+
+    public CategoryResponse addCategory(CategoryRequest request) {
+
+        Category category = new Category();
+        category.setName(request.getCategoryName());
+        category.setSlug(generateSlug(request.getCategoryName()));
+
+        if (request.getParentId() != null) {
+            Category parent = categoryRepository.findById(request.getParentId())
+                    .orElseThrow(() -> new RuntimeException("Parent category not found"));
+            category.setParent(parent);
         }
+
         Category saved = categoryRepository.save(category);
         return categoryMapper.toCategoryResponse(saved);
     }
+
+
+    // ===================== GENERATE SLUG =====================
+    private String generateSlug(String input) {
+        return input
+                .toLowerCase()
+                .trim()
+                .replaceAll("[^a-z0-9\\s-]", "")
+                .replaceAll("\\s+", "-");
+    }
+
+
 
     // Lấy tất cả category
     public List<CategoryResponse> getAllCategories() {
@@ -104,4 +135,20 @@ public class CategoryService {
                 .orElseThrow(() -> new RuntimeException("Danh muc khong ton tai"));
         categoryRepository.delete(category);
     }
+
+    // Lay danh sách id của các danh mục con
+    public Set<Integer> getAllChildCategoryIds(Integer parentId) {
+        Set<Integer> ids = new HashSet<>();
+        collectChildren(parentId, ids);
+        return ids;
+    }
+
+    private void collectChildren(Integer parentId, Set<Integer> ids) {
+        List<Category> children = categoryRepository.findByParentId(parentId);
+        for (Category c : children) {
+            ids.add(c.getCategoryId());
+            collectChildren(c.getCategoryId(), ids);
+        }
+    }
+
 }
